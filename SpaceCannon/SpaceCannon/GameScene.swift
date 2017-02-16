@@ -23,36 +23,20 @@ class GameScene: SKScene {
     
     override func didMove(to view: SKView) {
         self.physicsWorld.gravity = CGVector(dx: 0.0, dy: 0.0)
-        
-        // Get label node from scene and store it for use later
-//        self.label = self.childNode(withName: "//helloLabel") as? SKLabelNode
-//        if let label = self.label {
-//            label.alpha = 0.0
-//            label.run(SKAction.fadeIn(withDuration: 2.0))
-//        }
-        
-        // Create shape node to use during mouse interaction
-//        let w = (self.size.width + self.size.height) * 0.05
-//        self.spinnyNode = SKShapeNode.init(rectOf: CGSize.init(width: w, height: w), cornerRadius: w * 0.3)
-//        
-//        if let spinnyNode = self.spinnyNode {
-//            spinnyNode.lineWidth = 2.5
-//            
-//            spinnyNode.run(SKAction.repeatForever(SKAction.rotate(byAngle: CGFloat(M_PI), duration: 1)))
-//            spinnyNode.run(SKAction.sequence([SKAction.wait(forDuration: 0.5),
-//                                              SKAction.fadeOut(withDuration: 0.5),
-//                                              SKAction.removeFromParent()]))
-//        }
-        
-//        let cannon2 = SKSpriteNode(imageNamed: "Cannon")
-//        cannon2.position = CGPoint(x: 100, y: 100)
-//        cannon2.run(SKAction.repeatForever(
-//            SKAction.sequence([SKAction.rotate(byAngle: CGFloat(M_PI), duration: 2),
-//                               SKAction.rotate(byAngle: -(CGFloat)(M_PI), duration: 2)])
-//            ))
-//        self.addChild(cannon2)
+
         
         mainLayer = SKNode()
+        
+        // Add edges
+        let leftEdge = SKNode()
+        leftEdge.physicsBody = SKPhysicsBody(edgeFrom: CGPoint.zero, to: CGPoint(x: 0.0, y: self.size.height))
+        leftEdge.position = CGPoint(x: 20, y: 0)
+        self.addChild(leftEdge)
+
+        let rightEdge = SKNode()
+        rightEdge.physicsBody = SKPhysicsBody(edgeFrom: CGPoint.zero, to: CGPoint(x: 0.0, y: self.size.height))
+        rightEdge.position = CGPoint(x: self.size.width - 20, y: 0.0)
+        self.addChild(rightEdge)
         
         self.cannon = self.childNode(withName: "cannon") as? SKSpriteNode
         if let cannon = self.cannon {
@@ -85,8 +69,11 @@ class GameScene: SKScene {
                                 y: (cannon.position.y + cannon.size.height * 0.5 * rotationVector.dy))
         
         ball.physicsBody = SKPhysicsBody(circleOfRadius: 6.0)
-        
         ball.physicsBody?.velocity = CGVector(dx: rotationVector.dx * SHOOT_SPEED, dy: rotationVector.dy * SHOOT_SPEED)
+        ball.physicsBody?.restitution = 1.0
+        ball.physicsBody?.linearDamping = 0.0
+        ball.physicsBody?.friction = 0.0
+        
         mainLayer?.addChild(ball)
         
     }
@@ -94,6 +81,7 @@ class GameScene: SKScene {
     //MARK: Frame life cycle
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
+
     }
     override func didEvaluateActions() {
         // code
