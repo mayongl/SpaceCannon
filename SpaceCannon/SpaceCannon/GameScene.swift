@@ -33,6 +33,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let haloCategory : UInt32 = 0x1 << 0
     let ballCategory : UInt32 = 0x1 << 1
     let edgeCategory : UInt32 = 0x1 << 2
+    let shieldCategory : UInt32 = 0x1 << 3
+    let lifeBarCategory : UInt32 = 0x1 << 4
     var ammo = 5
 
     private var mainLayer : SKNode?
@@ -74,6 +76,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             ))
         }*/
         
+        for i in 0...6 {
+            let shield = SKSpriteNode(imageNamed: "Block")
+            shield.position = CGPoint(x: 75 + 100*i, y: 150)
+            shield.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 42, height: 9))
+            shield.physicsBody?.categoryBitMask = shieldCategory
+            shield.physicsBody?.collisionBitMask = 0
+            shield.xScale = 2.0
+            shield.yScale = 2.0
+            mainLayer?.addChild(shield)
+        }
+        
+        let lifeBar = SKSpriteNode(imageNamed: "BlueBar")
+        lifeBar.position = CGPoint(x: self.size.width/2, y: 120)
+        lifeBar.size = CGSize(width: self.size.width, height: lifeBar.size.height)
+        lifeBar.xScale = 2.0
+        lifeBar.yScale = 2.0
+        lifeBar.physicsBody = SKPhysicsBody(edgeFrom: CGPoint(x: -lifeBar.size.width/2, y: 0), to: CGPoint(x: lifeBar.size.width/2, y: 0))
+        lifeBar.physicsBody?.categoryBitMask = lifeBarCategory
+        lifeBar.physicsBody?.collisionBitMask = 0
+        mainLayer?.addChild(lifeBar)
         
         self.run(SKAction.repeatForever(SKAction.sequence([SKAction.wait(forDuration: 2, withRange: 1),
                                                            SKAction.perform(#selector(spawnHalo), onTarget: self)])))
@@ -102,7 +124,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         halo.physicsBody?.friction = 0.0
         halo.physicsBody?.categoryBitMask = haloCategory
         halo.physicsBody?.collisionBitMask = edgeCategory
-        halo.physicsBody?.contactTestBitMask = ballCategory
+        halo.physicsBody?.contactTestBitMask = ballCategory | shieldCategory | lifeBarCategory
         
         mainLayer?.addChild(halo)
         
@@ -185,17 +207,33 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         if (firstBody?.categoryBitMask == haloCategory && secondBody?.categoryBitMask == ballCategory) {
-            self.addExplosion(position: (firstBody?.node?.position)!)
+            self.addExplosion(position: (firstBody?.node?.position)!, name : "HaloExplosion")
 
             firstBody?.node?.removeFromParent()
             secondBody?.node?.removeFromParent()
         }
         
+        if (firstBody?.categoryBitMask == haloCategory && secondBody?.categoryBitMask == shieldCategory) {
+            self.addExplosion(position: (firstBody?.node?.position)!, name : "HaloExplosion")
+            
+            firstBody?.node?.removeFromParent()
+            secondBody?.node?.removeFromParent()
+        }
+        
+        if (firstBody?.categoryBitMask == haloCategory && secondBody?.categoryBitMask == lifeBarCategory) {
+            self.addExplosion(position: (firstBody?.node?.position)!, name : "HaloExplosion")
+            self.addExplosion(position: (secondBody?.node?.position)!, name : "LifeBarExplosion")
+            
+            firstBody?.node?.removeFromParent()
+            secondBody?.node?.removeFromParent()
+        }
     }
     
-    func addExplosion(position : CGPoint) {
-        guard let explosion = SKEmitterNode(fileNamed: "HaloExplosion.sks") else {return}
+    func addExplosion(position : CGPoint, name : String) {
+        guard let explosion = SKEmitterNode(fileNamed: name) else {return}
         explosion.position = position
+        explosion.xScale = 2.0
+        explosion.yScale = 2.0
         mainLayer?.addChild(explosion)
         
         explosion.run(SKAction.sequence([SKAction.wait(forDuration: 1.5),

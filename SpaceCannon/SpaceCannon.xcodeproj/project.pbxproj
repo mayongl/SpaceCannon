@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0D0F8D411E55985B00778A05 /* HaloExplosion.sks in Resources */ = {isa = PBXBuildFile; fileRef = 0D0F8D401E55985B00778A05 /* HaloExplosion.sks */; };
+		0DB572AF1E560ACE0086FFCF /* LifeBarExplosion.sks in Resources */ = {isa = PBXBuildFile; fileRef = 0DB572AE1E560ACE0086FFCF /* LifeBarExplosion.sks */; };
 		0DB5C2B21E54925D00F55F9D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DB5C2B11E54925D00F55F9D /* AppDelegate.swift */; };
 		0DB5C2B41E54925D00F55F9D /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 0DB5C2B31E54925D00F55F9D /* GameScene.sks */; };
 		0DB5C2B81E54925D00F55F9D /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DB5C2B71E54925D00F55F9D /* GameScene.swift */; };
@@ -19,6 +20,7 @@
 
 /* Begin PBXFileReference section */
 		0D0F8D401E55985B00778A05 /* HaloExplosion.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = HaloExplosion.sks; sourceTree = "<group>"; };
+		0DB572AE1E560ACE0086FFCF /* LifeBarExplosion.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = LifeBarExplosion.sks; sourceTree = "<group>"; };
 		0DB5C2AE1E54925D00F55F9D /* SpaceCannon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpaceCannon.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0DB5C2B11E54925D00F55F9D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0DB5C2B31E54925D00F55F9D /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -69,6 +71,7 @@
 				0DB5C2BE1E54925D00F55F9D /* Assets.xcassets */,
 				0DB5C2C01E54925D00F55F9D /* LaunchScreen.storyboard */,
 				0DB5C2C31E54925D00F55F9D /* Info.plist */,
+				0DB572AE1E560ACE0086FFCF /* LifeBarExplosion.sks */,
 			);
 			path = SpaceCannon;
 			sourceTree = "<group>";
@@ -134,6 +137,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0D0F8D411E55985B00778A05 /* HaloExplosion.sks in Resources */,
+				0DB572AF1E560ACE0086FFCF /* LifeBarExplosion.sks in Resources */,
 				0DB5C2BD1E54925D00F55F9D /* Main.storyboard in Resources */,
 				0DB5C2B41E54925D00F55F9D /* GameScene.sks in Resources */,
 				0DB5C2BF1E54925D00F55F9D /* Assets.xcassets in Resources */,
