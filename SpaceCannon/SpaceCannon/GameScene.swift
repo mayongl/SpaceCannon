@@ -20,13 +20,13 @@ func radiansToVector(radians : CGFloat) -> CGVector {
 }
 
 func randomInRange(low : CGFloat, high : CGFloat) -> CGFloat{
-    var value = CGFloat(arc4random_uniform(UINT32_MAX) / UINT32_MAX)
+    var value = CGFloat(arc4random_uniform(10000)) / CGFloat(10000)
     value = value * (high - low) + low
     return value
 }
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
-    let SHOOT_SPEED : CGFloat = 500.0
+    let SHOOT_SPEED : CGFloat = 1000.0
     let HaloLowAngle : CGFloat = 200.0 * CGFloat.pi / 180.0
     let HaloHighAngle : CGFloat = 340.0 * CGFloat.pi / 180.0
     let HaloSpeed : CGFloat = 200.0
@@ -60,13 +60,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let leftEdge = SKNode()
         leftEdge.physicsBody = SKPhysicsBody(edgeFrom: CGPoint.zero, to: CGPoint(x: 0.0, y: self.size.height))
         leftEdge.physicsBody?.categoryBitMask = edgeCategory
-        leftEdge.position = CGPoint(x: 10, y: 0)
+        leftEdge.position = CGPoint(x: 0, y: 0)
         self.addChild(leftEdge)
 
         let rightEdge = SKNode()
         rightEdge.physicsBody = SKPhysicsBody(edgeFrom: CGPoint.zero, to: CGPoint(x: 0.0, y: self.size.height))
         rightEdge.physicsBody?.categoryBitMask = edgeCategory
-        rightEdge.position = CGPoint(x: self.size.width - 10, y: 0.0)
+        rightEdge.position = CGPoint(x: self.size.width, y: 0.0)
         self.addChild(rightEdge)
         
         /*if let cannon = self.cannon {
@@ -76,8 +76,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             ))
         }*/
         
+        newGame()
+        
+        // Spawn halos
+        self.run(SKAction.repeatForever(SKAction.sequence([SKAction.wait(forDuration: 2, withRange: 1),
+                                                           SKAction.perform(#selector(spawnHalo), onTarget: self)])))
+
+        // Restore ammo
+        self.run(SKAction.repeatForever(SKAction.sequence([SKAction.wait(forDuration: 1),
+                                                           SKAction.run {self.ammo += 1
+                                                            self.setAmmo(ammo: self.ammo)}
+                                                            ])))
+    }
+    
+    func newGame() {
+        mainLayer?.removeAllChildren()
+        
+        ammo = 5
+        
+        // Add shields
         for i in 0...6 {
             let shield = SKSpriteNode(imageNamed: "Block")
+            shield.name = "shield"
             shield.position = CGPoint(x: 75 + 100*i, y: 150)
             shield.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 42, height: 9))
             shield.physicsBody?.categoryBitMask = shieldCategory
@@ -87,6 +107,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             mainLayer?.addChild(shield)
         }
         
+        // Add life bar
         let lifeBar = SKSpriteNode(imageNamed: "BlueBar")
         lifeBar.position = CGPoint(x: self.size.width/2, y: 120)
         lifeBar.size = CGSize(width: self.size.width, height: lifeBar.size.height)
@@ -96,19 +117,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         lifeBar.physicsBody?.categoryBitMask = lifeBarCategory
         lifeBar.physicsBody?.collisionBitMask = 0
         mainLayer?.addChild(lifeBar)
-        
-        self.run(SKAction.repeatForever(SKAction.sequence([SKAction.wait(forDuration: 2, withRange: 1),
-                                                           SKAction.perform(#selector(spawnHalo), onTarget: self)])))
-
-        self.run(SKAction.repeatForever(SKAction.sequence([SKAction.wait(forDuration: 1),
-                                                           SKAction.run {self.ammo += 1
-                                                            self.setAmmo(ammo: self.ammo)}
-                                                            ])))
     }
     
     func spawnHalo() {
         let halo = SKSpriteNode(imageNamed: "Halo")
-        halo.position = CGPoint(x: CGFloat(arc4random_uniform(UInt32(self.size.width))), y: self.size.height)
+        halo.name = "halo"
+        halo.position = CGPoint(x: CGFloat(arc4random_uniform(UInt32(self.size.width-halo.size.width)))+halo.size.width, y: self.size.height)
         halo.xScale = 2.0
         halo.yScale = 2.0
         
@@ -221,12 +235,29 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         if (firstBody?.categoryBitMask == haloCategory && secondBody?.categoryBitMask == lifeBarCategory) {
-            self.addExplosion(position: (firstBody?.node?.position)!, name : "HaloExplosion")
+            //self.addExplosion(position: (firstBody?.node?.position)!, name : "HaloExplosion")
             self.addExplosion(position: (secondBody?.node?.position)!, name : "LifeBarExplosion")
             
-            firstBody?.node?.removeFromParent()
+            //firstBody?.node?.removeFromParent()
             secondBody?.node?.removeFromParent()
+            gameOver()
         }
+    }
+    
+    func gameOver() {
+        mainLayer?.enumerateChildNodes(withName: "halo", using: { (node, stop) in
+                self.addExplosion(position: node.position, name : "HaloExplosion")
+                node.removeFromParent()
+        })
+        mainLayer?.enumerateChildNodes(withName: "ball", using: { (node, stop) in
+            node.removeFromParent()
+        })
+        mainLayer?.enumerateChildNodes(withName: "shield", using: { (node, stop) in
+            node.removeFromParent()
+        })
+        
+        self.run(SKAction.sequence([SKAction.wait(forDuration: 1.5),
+                                                           SKAction.perform(#selector(newGame), onTarget: self)]))
     }
     
     func addExplosion(position : CGPoint, name : String) {
