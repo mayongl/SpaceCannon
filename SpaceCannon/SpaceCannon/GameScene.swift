@@ -9,12 +9,28 @@
 import SpriteKit
 import GameplayKit
 
-let SHOOT_SPEED : CGFloat = 1000.0
+
+
+
+func radiansToVector(radians : CGFloat) -> CGVector {
+    var vector = CGVector()
+    vector.dx = cos(radians)
+    vector.dy = sin(radians)
+    return vector
+}
+
+func randomInRange(low : CGFloat, high : CGFloat) -> CGFloat{
+    var value = CGFloat(arc4random_uniform(UINT32_MAX) / UINT32_MAX)
+    value = value * (high - low) + low
+    return value
+}
 
 class GameScene: SKScene {
+    let SHOOT_SPEED : CGFloat = 1000.0
+    let HaloLowAngle : CGFloat = 200.0 * CGFloat.pi / 180.0
+    let HaloHighAngle : CGFloat = 340.0 * CGFloat.pi / 180.0
+    let HaloSpeed : CGFloat = 500.0
     
-//    private var label : SKLabelNode?
-//    private var spinnyNode : SKSpriteNode?
 
     private var mainLayer : SKNode?
     private var cannon : SKSpriteNode?
@@ -41,20 +57,39 @@ class GameScene: SKScene {
         self.cannon = self.childNode(withName: "cannon") as? SKSpriteNode
         if let cannon = self.cannon {
             cannon.run(SKAction.repeatForever(
-                SKAction.sequence([SKAction.rotate(byAngle: CGFloat(Float.pi), duration: 2),
-                                SKAction.rotate(byAngle: -(CGFloat)(Float.pi), duration: 2)])
+                SKAction.sequence([SKAction.rotate(byAngle: CGFloat.pi, duration: 2),
+                                SKAction.rotate(byAngle: -CGFloat.pi, duration: 2)])
             ))
         }
         
         self.addChild(mainLayer!)
         
+        
+        self.run(SKAction.repeatForever(SKAction.sequence([SKAction.wait(forDuration: 2, withRange: 1), SKAction.perform(#selector(GameScene.spawnHalo), onTarget: self)])))
+        
     }
     
-    func radiansToVector(radians : CGFloat) -> CGVector {
-        var vector = CGVector()
-        vector.dx = CGFloat(cosf(Float(radians)))
-        vector.dy = CGFloat(sinf(Float(radians)))
-        return vector
+    func spawnHalo() {
+        let halo = SKSpriteNode(imageNamed: "Halo")
+        halo.position = CGPoint(x: CGFloat(arc4random_uniform(UInt32(self.size.width))), y: self.size.height)
+        halo.xScale = 2.0
+        halo.yScale = 2.0
+        
+        halo.physicsBody = SKPhysicsBody(circleOfRadius: 32.0)
+        
+        guard (halo.physicsBody != nil) else {return}
+        
+        let direction = radiansToVector(radians: randomInRange(low: HaloLowAngle, high: HaloHighAngle))
+        halo.physicsBody?.velocity.dx = direction.dx * HaloSpeed
+        halo.physicsBody?.velocity.dy = direction.dy * HaloSpeed
+        halo.physicsBody?.restitution = 1.0
+        halo.physicsBody?.linearDamping = 0.0
+        halo.physicsBody?.friction = 0.0
+        halo.zPosition = 500
+        
+        
+        mainLayer?.addChild(halo)
+        
     }
     
     func shoot() {
