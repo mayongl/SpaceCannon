@@ -33,6 +33,7 @@ class GameScene: SKScene {
     
 
     private var mainLayer : SKNode?
+    private var menuLayer : SKNode?
     private var cannon : SKSpriteNode?
     private var didShoot = false
     
@@ -40,8 +41,9 @@ class GameScene: SKScene {
     override func didMove(to view: SKView) {
         self.physicsWorld.gravity = CGVector(dx: 0.0, dy: 0.0)
 
-        
-        mainLayer = SKNode()
+        self.cannon = self.childNode(withName: "cannon") as? SKSpriteNode
+        self.mainLayer = self.childNode(withName: "mainLayer")
+        self.menuLayer = self.childNode(withName: "menuLayer")
         
         // Add edges
         let leftEdge = SKNode()
@@ -54,15 +56,12 @@ class GameScene: SKScene {
         rightEdge.position = CGPoint(x: self.size.width - 20, y: 0.0)
         self.addChild(rightEdge)
         
-        self.cannon = self.childNode(withName: "cannon") as? SKSpriteNode
-        if let cannon = self.cannon {
+        /*if let cannon = self.cannon {
             cannon.run(SKAction.repeatForever(
                 SKAction.sequence([SKAction.rotate(byAngle: CGFloat.pi, duration: 2),
                                 SKAction.rotate(byAngle: -CGFloat.pi, duration: 2)])
             ))
-        }
-        
-        self.addChild(mainLayer!)
+        }*/
         
         
         self.run(SKAction.repeatForever(SKAction.sequence([SKAction.wait(forDuration: 2, withRange: 1), SKAction.perform(#selector(GameScene.spawnHalo), onTarget: self)])))
