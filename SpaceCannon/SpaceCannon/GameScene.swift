@@ -18,6 +18,7 @@ class GameScene: SKScene {
 
     private var mainLayer : SKNode?
     private var cannon : SKSpriteNode?
+    private var didShoot = false
     
     
     override func didMove(to view: SKView) {
@@ -90,7 +91,35 @@ class GameScene: SKScene {
         
     }
     
-    //MARK - Touch
+    //MARK: Frame life cycle
+    override func update(_ currentTime: TimeInterval) {
+        // Called before each frame is rendered
+    }
+    override func didEvaluateActions() {
+        // code
+    }
+    override func didSimulatePhysics() {
+        if didShoot {
+            shoot()
+            didShoot = false
+        }
+        // Clean up balls
+        mainLayer?.enumerateChildNodes(withName: "ball", using: { (node, stop) in
+            if  !self.frame.contains(node.position) {
+                node.removeFromParent()
+            }
+        })
+    }
+    
+    override func didApplyConstraints() {
+        //<#code#>
+    }
+    override func didFinishUpdate() {
+        //<#code#>
+    }
+    
+    
+    //MARK: - Touch handling
     
     func touchDown(atPoint pos : CGPoint) {
 //        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
@@ -120,7 +149,8 @@ class GameScene: SKScene {
 //        if let label = self.label {
 //            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
 //        }
-        shoot()
+        didShoot = true
+        
         for t in touches { self.touchDown(atPoint: t.location(in: self)) }
     }
     
@@ -137,7 +167,4 @@ class GameScene: SKScene {
     }
     
     
-    override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
-    }
 }
