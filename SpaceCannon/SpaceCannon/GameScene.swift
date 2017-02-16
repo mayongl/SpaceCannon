@@ -29,15 +29,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let SHOOT_SPEED : CGFloat = 500.0
     let HaloLowAngle : CGFloat = 200.0 * CGFloat.pi / 180.0
     let HaloHighAngle : CGFloat = 340.0 * CGFloat.pi / 180.0
-    let HaloSpeed : CGFloat = 100.0
+    let HaloSpeed : CGFloat = 200.0
     let haloCategory : UInt32 = 0x1 << 0
     let ballCategory : UInt32 = 0x1 << 1
     let edgeCategory : UInt32 = 0x1 << 2
-    
+    var ammo = 5
 
     private var mainLayer : SKNode?
     private var menuLayer : SKNode?
     private var cannon : SKSpriteNode?
+    private var ammoDisplay : SKSpriteNode?
+    private var explosion : SKEmitterNode?
     private var didShoot = false
     
     
@@ -45,7 +47,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.physicsWorld.gravity = CGVector(dx: 0.0, dy: 0.0)
         self.physicsWorld.contactDelegate = self
 
+        self.explosion = SKEmitterNode(fileNamed: "HaloExplosion.sks")
+
         self.cannon = self.childNode(withName: "cannon") as? SKSpriteNode
+        self.ammoDisplay = self.childNode(withName: "ammoDisplay") as? SKSpriteNode
         self.mainLayer = self.childNode(withName: "mainLayer")
         self.menuLayer = self.childNode(withName: "menuLayer")
         
@@ -101,8 +106,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
+    func setAmmo(ammo : Int) {
+        if (ammo >= 0 && ammo <= 5) {
+            self.ammo = ammo
+            ammoDisplay?.texture = SKTexture(imageNamed: String.init(format: "Ammo%d", ammo))
+        }
+    }
+    
     func shoot() {
+        guard self.ammo > 0 else {return}
         guard let cannon = self.cannon else { return }
+        
+        setAmmo(ammo: (self.ammo - 1))
         
         let ball = SKSpriteNode(imageNamed: "Ball")
         ball.name = "ball"
@@ -137,11 +152,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if didShoot {
             shoot()
             didShoot = false
+
         }
         // Clean up balls
         mainLayer?.enumerateChildNodes(withName: "ball", using: { (node, stop) in
             if  !self.frame.contains(node.position) {
                 node.removeFromParent()
+                self.setAmmo(ammo: (self.ammo+1))
             }
         })
     }
@@ -168,18 +185,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         if (firstBody?.categoryBitMask == haloCategory && secondBody?.categoryBitMask == ballCategory) {
             self.addExplosion(position: (firstBody?.node?.position)!)
+
             firstBody?.node?.removeFromParent()
             secondBody?.node?.removeFromParent()
+            self.setAmmo(ammo: self.ammo+1)
         }
         
     }
     
     func addExplosion(position : CGPoint) {
-        guard let explosion = SKEmitterNode(fileNamed: "HaloExplosion.sks") else {return}
-        explosion.position = position
-        mainLayer?.addChild(explosion)
+        //guard let explosion = SKEmitterNode(fileNamed: "HaloExplosion.sks") else {return}
+        self.explosion?.position = position
+        //mainLayer?.addChild(self.explosion!)
         
-        explosion.run(SKAction.sequence([SKAction.wait(forDuration: 1.5),
+        self.explosion?.run(SKAction.sequence([SKAction.wait(forDuration: 1.5),
                                SKAction.removeFromParent()]))
     }
     
@@ -213,7 +232,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //        if let label = self.label {
 //            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
 //        }
-        didShoot = true
+        if (ammo > 0 && didShoot == false) {
+            didShoot = true
+        }
         
         for t in touches { self.touchDown(atPoint: t.location(in: self)) }
     }
