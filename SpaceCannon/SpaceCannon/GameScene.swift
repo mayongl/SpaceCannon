@@ -39,7 +39,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private var menuLayer : SKNode?
     private var cannon : SKSpriteNode?
     private var ammoDisplay : SKSpriteNode?
-    private var explosion : SKEmitterNode?
+    //private var explosion : SKEmitterNode?
     private var didShoot = false
     
     
@@ -47,7 +47,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.physicsWorld.gravity = CGVector(dx: 0.0, dy: 0.0)
         self.physicsWorld.contactDelegate = self
 
-        self.explosion = SKEmitterNode(fileNamed: "HaloExplosion.sks")
+        //self.explosion = SKEmitterNode(fileNamed: "HaloExplosion.sks")
 
         self.cannon = self.childNode(withName: "cannon") as? SKSpriteNode
         self.ammoDisplay = self.childNode(withName: "ammoDisplay") as? SKSpriteNode
@@ -77,7 +77,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         self.run(SKAction.repeatForever(SKAction.sequence([SKAction.wait(forDuration: 2, withRange: 1),
                                                            SKAction.perform(#selector(spawnHalo), onTarget: self)])))
-        
+
+        self.run(SKAction.repeatForever(SKAction.sequence([SKAction.wait(forDuration: 1),
+                                                           SKAction.run {self.ammo += 1
+                                                            self.setAmmo(ammo: self.ammo)}
+                                                            ])))
     }
     
     func spawnHalo() {
@@ -99,8 +103,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         halo.physicsBody?.categoryBitMask = haloCategory
         halo.physicsBody?.collisionBitMask = edgeCategory
         halo.physicsBody?.contactTestBitMask = ballCategory
-
-        
         
         mainLayer?.addChild(halo)
         
@@ -108,7 +110,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func setAmmo(ammo : Int) {
         if (ammo >= 0 && ammo <= 5) {
-            self.ammo = ammo
+            //self.ammo = ammo
             ammoDisplay?.texture = SKTexture(imageNamed: String.init(format: "Ammo%d", ammo))
         }
     }
@@ -116,8 +118,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func shoot() {
         guard self.ammo > 0 else {return}
         guard let cannon = self.cannon else { return }
-        
-        setAmmo(ammo: (self.ammo - 1))
+        self.ammo -= 1
+        setAmmo(ammo: self.ammo)
         
         let ball = SKSpriteNode(imageNamed: "Ball")
         ball.name = "ball"
@@ -158,7 +160,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         mainLayer?.enumerateChildNodes(withName: "ball", using: { (node, stop) in
             if  !self.frame.contains(node.position) {
                 node.removeFromParent()
-                self.setAmmo(ammo: (self.ammo+1))
             }
         })
     }
@@ -188,58 +189,54 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
             firstBody?.node?.removeFromParent()
             secondBody?.node?.removeFromParent()
-            self.setAmmo(ammo: self.ammo+1)
         }
         
     }
     
     func addExplosion(position : CGPoint) {
-        //guard let explosion = SKEmitterNode(fileNamed: "HaloExplosion.sks") else {return}
-        self.explosion?.position = position
-        //mainLayer?.addChild(self.explosion!)
+        guard let explosion = SKEmitterNode(fileNamed: "HaloExplosion.sks") else {return}
+        explosion.position = position
+        mainLayer?.addChild(explosion)
         
-        self.explosion?.run(SKAction.sequence([SKAction.wait(forDuration: 1.5),
+        explosion.run(SKAction.sequence([SKAction.wait(forDuration: 1.5),
                                SKAction.removeFromParent()]))
     }
     
     //MARK: - Touch handling
     
-    func touchDown(atPoint pos : CGPoint) {
+//    func touchDown(atPoint pos : CGPoint) {
 //        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
 //            n.position = pos
 //            n.strokeColor = SKColor.green
 //            self.addChild(n)
 //        }
-    }
-    
-    func touchMoved(toPoint pos : CGPoint) {
+//    }
+//    
+//    func touchMoved(toPoint pos : CGPoint) {
 //        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
 //            n.position = pos
 //            n.strokeColor = SKColor.blue
 //            self.addChild(n)
 //        }
-    }
-    
-    func touchUp(atPoint pos : CGPoint) {
+//    }
+//    
+//    func touchUp(atPoint pos : CGPoint) {
 //        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
 //            n.position = pos
 //            n.strokeColor = SKColor.red
 //            self.addChild(n)
 //        }
-    }
+//    }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 //        if let label = self.label {
 //            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
 //        }
-        if (ammo > 0 && didShoot == false) {
-            didShoot = true
-        }
-        
-        for t in touches { self.touchDown(atPoint: t.location(in: self)) }
+        didShoot = true
+        //for t in touches { self.touchDown(atPoint: t.location(in: self)) }
     }
     
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+    /*override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         for t in touches { self.touchMoved(toPoint: t.location(in: self)) }
     }
     
@@ -249,7 +246,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         for t in touches { self.touchUp(atPoint: t.location(in: self)) }
-    }
+    }*/
     
     
 }
