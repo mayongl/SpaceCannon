@@ -25,11 +25,14 @@ func randomInRange(low : CGFloat, high : CGFloat) -> CGFloat{
     return value
 }
 
-class GameScene: SKScene {
-    let SHOOT_SPEED : CGFloat = 1000.0
+class GameScene: SKScene, SKPhysicsContactDelegate {
+    let SHOOT_SPEED : CGFloat = 500.0
     let HaloLowAngle : CGFloat = 200.0 * CGFloat.pi / 180.0
     let HaloHighAngle : CGFloat = 340.0 * CGFloat.pi / 180.0
-    let HaloSpeed : CGFloat = 500.0
+    let HaloSpeed : CGFloat = 100.0
+    let haloCategory : UInt32 = 0x1 << 0
+    let ballCategory : UInt32 = 0x1 << 1
+    let edgeCategory : UInt32 = 0x1 << 2
     
 
     private var mainLayer : SKNode?
@@ -40,6 +43,7 @@ class GameScene: SKScene {
     
     override func didMove(to view: SKView) {
         self.physicsWorld.gravity = CGVector(dx: 0.0, dy: 0.0)
+        self.physicsWorld.contactDelegate = self
 
         self.cannon = self.childNode(withName: "cannon") as? SKSpriteNode
         self.mainLayer = self.childNode(withName: "mainLayer")
@@ -48,12 +52,14 @@ class GameScene: SKScene {
         // Add edges
         let leftEdge = SKNode()
         leftEdge.physicsBody = SKPhysicsBody(edgeFrom: CGPoint.zero, to: CGPoint(x: 0.0, y: self.size.height))
-        leftEdge.position = CGPoint(x: 20, y: 0)
+        leftEdge.physicsBody?.categoryBitMask = edgeCategory
+        leftEdge.position = CGPoint(x: 10, y: 0)
         self.addChild(leftEdge)
 
         let rightEdge = SKNode()
         rightEdge.physicsBody = SKPhysicsBody(edgeFrom: CGPoint.zero, to: CGPoint(x: 0.0, y: self.size.height))
-        rightEdge.position = CGPoint(x: self.size.width - 20, y: 0.0)
+        rightEdge.physicsBody?.categoryBitMask = edgeCategory
+        rightEdge.position = CGPoint(x: self.size.width - 10, y: 0.0)
         self.addChild(rightEdge)
         
         /*if let cannon = self.cannon {
@@ -64,7 +70,8 @@ class GameScene: SKScene {
         }*/
         
         
-        self.run(SKAction.repeatForever(SKAction.sequence([SKAction.wait(forDuration: 2, withRange: 1), SKAction.perform(#selector(GameScene.spawnHalo), onTarget: self)])))
+        self.run(SKAction.repeatForever(SKAction.sequence([SKAction.wait(forDuration: 2, withRange: 1),
+                                                           SKAction.perform(#selector(spawnHalo), onTarget: self)])))
         
     }
     
@@ -84,7 +91,10 @@ class GameScene: SKScene {
         halo.physicsBody?.restitution = 1.0
         halo.physicsBody?.linearDamping = 0.0
         halo.physicsBody?.friction = 0.0
-        halo.zPosition = 500
+        halo.physicsBody?.categoryBitMask = haloCategory
+        halo.physicsBody?.collisionBitMask = edgeCategory
+        halo.physicsBody?.contactTestBitMask = ballCategory
+
         
         
         mainLayer?.addChild(halo)
@@ -102,11 +112,14 @@ class GameScene: SKScene {
         ball.position = CGPoint(x: (cannon.position.x + cannon.size.width * 0.5 * rotationVector.dx),
                                 y: (cannon.position.y + cannon.size.height * 0.5 * rotationVector.dy))
         
-        ball.physicsBody = SKPhysicsBody(circleOfRadius: 6.0)
+        ball.physicsBody = SKPhysicsBody(circleOfRadius: 12.0)
         ball.physicsBody?.velocity = CGVector(dx: rotationVector.dx * SHOOT_SPEED, dy: rotationVector.dy * SHOOT_SPEED)
         ball.physicsBody?.restitution = 1.0
         ball.physicsBody?.linearDamping = 0.0
         ball.physicsBody?.friction = 0.0
+        ball.physicsBody?.categoryBitMask = ballCategory
+        ball.physicsBody?.collisionBitMask = edgeCategory
+        
         
         mainLayer?.addChild(ball)
         
@@ -140,6 +153,35 @@ class GameScene: SKScene {
         //<#code#>
     }
     
+    //MARK: collision handling
+    func didBegin(_ contact: SKPhysicsContact) {
+        var firstBody : SKPhysicsBody?
+        var secondBody : SKPhysicsBody?
+        
+        if (contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask) {
+            firstBody = contact.bodyA
+            secondBody = contact.bodyB
+        } else {
+            firstBody = contact.bodyB
+            secondBody = contact.bodyA
+        }
+        
+        if (firstBody?.categoryBitMask == haloCategory && secondBody?.categoryBitMask == ballCategory) {
+            self.addExplosion(position: (firstBody?.node?.position)!)
+            firstBody?.node?.removeFromParent()
+            secondBody?.node?.removeFromParent()
+        }
+        
+    }
+    
+    func addExplosion(position : CGPoint) {
+        guard let explosion = SKEmitterNode(fileNamed: "HaloExplosion.sks") else {return}
+        explosion.position = position
+        mainLayer?.addChild(explosion)
+        
+        explosion.run(SKAction.sequence([SKAction.wait(forDuration: 1.5),
+                               SKAction.removeFromParent()]))
+    }
     
     //MARK: - Touch handling
     
