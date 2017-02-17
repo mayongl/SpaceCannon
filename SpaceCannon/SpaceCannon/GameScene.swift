@@ -202,7 +202,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         ball.physicsBody?.collisionBitMask = edgeCategory
         ball.physicsBody?.contactTestBitMask = edgeCategory
         
-        
+        let trail = SKEmitterNode(fileNamed: "BallTrail")
+        trail?.targetNode = mainLayer
+        trail?.xScale = 2.0
+        trail?.yScale = 2.0
+        ball.addChild(trail!)
         mainLayer?.addChild(ball)
         
     }

@@ -22,6 +22,7 @@
 		0DB5C2BD1E54925D00F55F9D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0DB5C2BB1E54925D00F55F9D /* Main.storyboard */; };
 		0DB5C2BF1E54925D00F55F9D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0DB5C2BE1E54925D00F55F9D /* Assets.xcassets */; };
 		0DB5C2C21E54925D00F55F9D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0DB5C2C01E54925D00F55F9D /* LaunchScreen.storyboard */; };
+		0DF0602F1E5746DA00E6F6B5 /* BallTrail.sks in Resources */ = {isa = PBXBuildFile; fileRef = 0DF0602E1E5746DA00E6F6B5 /* BallTrail.sks */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,7 @@
 		0DB5C2BE1E54925D00F55F9D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0DB5C2C11E54925D00F55F9D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0DB5C2C31E54925D00F55F9D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0DF0602E1E5746DA00E6F6B5 /* BallTrail.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = BallTrail.sks; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +93,7 @@
 				0DB5C2B11E54925D00F55F9D /* AppDelegate.swift */,
 				0DB5C2B31E54925D00F55F9D /* GameScene.sks */,
 				0D0F8D401E55985B00778A05 /* HaloExplosion.sks */,
+				0DF0602E1E5746DA00E6F6B5 /* BallTrail.sks */,
 				0DB5C2B71E54925D00F55F9D /* GameScene.swift */,
 				0DB5C2B91E54925D00F55F9D /* GameViewController.swift */,
 				0DB5C2BB1E54925D00F55F9D /* Main.storyboard */,
@@ -169,6 +172,7 @@
 				0DB5C2BD1E54925D00F55F9D /* Main.storyboard in Resources */,
 				0DB572BA1E56B6A10086FFCF /* Laser.caf in Resources */,
 				0DB572BC1E56B6A10086FFCF /* Zap.caf in Resources */,
+				0DF0602F1E5746DA00E6F6B5 /* BallTrail.sks in Resources */,
 				0DB5C2B41E54925D00F55F9D /* GameScene.sks in Resources */,
 				0DB572B91E56B6A10086FFCF /* Explosion.caf in Resources */,
 				0DB572B71E56B6A10086FFCF /* Bounce.caf in Resources */,
