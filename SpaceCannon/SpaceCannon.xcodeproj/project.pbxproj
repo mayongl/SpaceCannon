@@ -9,6 +9,12 @@
 /* Begin PBXBuildFile section */
 		0D0F8D411E55985B00778A05 /* HaloExplosion.sks in Resources */ = {isa = PBXBuildFile; fileRef = 0D0F8D401E55985B00778A05 /* HaloExplosion.sks */; };
 		0DB572AF1E560ACE0086FFCF /* LifeBarExplosion.sks in Resources */ = {isa = PBXBuildFile; fileRef = 0DB572AE1E560ACE0086FFCF /* LifeBarExplosion.sks */; };
+		0DB572B71E56B6A10086FFCF /* Bounce.caf in Resources */ = {isa = PBXBuildFile; fileRef = 0DB572B11E56B6A10086FFCF /* Bounce.caf */; };
+		0DB572B81E56B6A10086FFCF /* DeepExplosion.caf in Resources */ = {isa = PBXBuildFile; fileRef = 0DB572B21E56B6A10086FFCF /* DeepExplosion.caf */; };
+		0DB572B91E56B6A10086FFCF /* Explosion.caf in Resources */ = {isa = PBXBuildFile; fileRef = 0DB572B31E56B6A10086FFCF /* Explosion.caf */; };
+		0DB572BA1E56B6A10086FFCF /* Laser.caf in Resources */ = {isa = PBXBuildFile; fileRef = 0DB572B41E56B6A10086FFCF /* Laser.caf */; };
+		0DB572BB1E56B6A10086FFCF /* ShieldUp.caf in Resources */ = {isa = PBXBuildFile; fileRef = 0DB572B51E56B6A10086FFCF /* ShieldUp.caf */; };
+		0DB572BC1E56B6A10086FFCF /* Zap.caf in Resources */ = {isa = PBXBuildFile; fileRef = 0DB572B61E56B6A10086FFCF /* Zap.caf */; };
 		0DB5C2B21E54925D00F55F9D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DB5C2B11E54925D00F55F9D /* AppDelegate.swift */; };
 		0DB5C2B41E54925D00F55F9D /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 0DB5C2B31E54925D00F55F9D /* GameScene.sks */; };
 		0DB5C2B81E54925D00F55F9D /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DB5C2B71E54925D00F55F9D /* GameScene.swift */; };
@@ -21,6 +27,12 @@
 /* Begin PBXFileReference section */
 		0D0F8D401E55985B00778A05 /* HaloExplosion.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = HaloExplosion.sks; sourceTree = "<group>"; };
 		0DB572AE1E560ACE0086FFCF /* LifeBarExplosion.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = LifeBarExplosion.sks; sourceTree = "<group>"; };
+		0DB572B11E56B6A10086FFCF /* Bounce.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Bounce.caf; sourceTree = "<group>"; };
+		0DB572B21E56B6A10086FFCF /* DeepExplosion.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = DeepExplosion.caf; sourceTree = "<group>"; };
+		0DB572B31E56B6A10086FFCF /* Explosion.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Explosion.caf; sourceTree = "<group>"; };
+		0DB572B41E56B6A10086FFCF /* Laser.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Laser.caf; sourceTree = "<group>"; };
+		0DB572B51E56B6A10086FFCF /* ShieldUp.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ShieldUp.caf; sourceTree = "<group>"; };
+		0DB572B61E56B6A10086FFCF /* Zap.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Zap.caf; sourceTree = "<group>"; };
 		0DB5C2AE1E54925D00F55F9D /* SpaceCannon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpaceCannon.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0DB5C2B11E54925D00F55F9D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0DB5C2B31E54925D00F55F9D /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -43,6 +55,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0DB572B01E56B6A10086FFCF /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				0DB572B11E56B6A10086FFCF /* Bounce.caf */,
+				0DB572B21E56B6A10086FFCF /* DeepExplosion.caf */,
+				0DB572B31E56B6A10086FFCF /* Explosion.caf */,
+				0DB572B41E56B6A10086FFCF /* Laser.caf */,
+				0DB572B51E56B6A10086FFCF /* ShieldUp.caf */,
+				0DB572B61E56B6A10086FFCF /* Zap.caf */,
+			);
+			path = Sounds;
+			sourceTree = "<group>";
+		};
 		0DB5C2A51E54925D00F55F9D = {
 			isa = PBXGroup;
 			children = (
@@ -62,6 +87,7 @@
 		0DB5C2B01E54925D00F55F9D /* SpaceCannon */ = {
 			isa = PBXGroup;
 			children = (
+				0DB572B01E56B6A10086FFCF /* Sounds */,
 				0DB5C2B11E54925D00F55F9D /* AppDelegate.swift */,
 				0DB5C2B31E54925D00F55F9D /* GameScene.sks */,
 				0D0F8D401E55985B00778A05 /* HaloExplosion.sks */,
@@ -136,10 +162,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0DB572B81E56B6A10086FFCF /* DeepExplosion.caf in Resources */,
+				0DB572BB1E56B6A10086FFCF /* ShieldUp.caf in Resources */,
 				0D0F8D411E55985B00778A05 /* HaloExplosion.sks in Resources */,
 				0DB572AF1E560ACE0086FFCF /* LifeBarExplosion.sks in Resources */,
 				0DB5C2BD1E54925D00F55F9D /* Main.storyboard in Resources */,
+				0DB572BA1E56B6A10086FFCF /* Laser.caf in Resources */,
+				0DB572BC1E56B6A10086FFCF /* Zap.caf in Resources */,
 				0DB5C2B41E54925D00F55F9D /* GameScene.sks in Resources */,
+				0DB572B91E56B6A10086FFCF /* Explosion.caf in Resources */,
+				0DB572B71E56B6A10086FFCF /* Bounce.caf in Resources */,
 				0DB5C2BF1E54925D00F55F9D /* Assets.xcassets in Resources */,
 				0DB5C2C21E54925D00F55F9D /* LaunchScreen.storyboard in Resources */,
 			);
@@ -279,6 +311,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 4MWX6CJSX5;
 				INFOPLIST_FILE = SpaceCannon/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sixlivesleft.SpaceCannon;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -292,6 +325,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 4MWX6CJSX5;
 				INFOPLIST_FILE = SpaceCannon/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sixlivesleft.SpaceCannon;
 				PRODUCT_NAME = "$(TARGET_NAME)";

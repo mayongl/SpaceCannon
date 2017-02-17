@@ -178,6 +178,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         ball.physicsBody?.friction = 0.0
         ball.physicsBody?.categoryBitMask = ballCategory
         ball.physicsBody?.collisionBitMask = edgeCategory
+        ball.physicsBody?.contactTestBitMask = edgeCategory
         
         
         mainLayer?.addChild(ball)
@@ -228,6 +229,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         if (firstBody?.categoryBitMask == haloCategory && secondBody?.categoryBitMask == ballCategory) {
             self.addExplosion(position: (firstBody?.node?.position)!, name : "HaloExplosion")
+            self.run(SKAction.playSoundFileNamed("Explosion.caf", waitForCompletion: false))
             self.score += 1
             firstBody?.node?.removeFromParent()
             secondBody?.node?.removeFromParent()
@@ -235,6 +237,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         if (firstBody?.categoryBitMask == haloCategory && secondBody?.categoryBitMask == shieldCategory) {
             self.addExplosion(position: (firstBody?.node?.position)!, name : "HaloExplosion")
+            self.run(SKAction.playSoundFileNamed("Explosion.caf", waitForCompletion: false))
             
             firstBody?.node?.removeFromParent()
             secondBody?.node?.removeFromParent()
@@ -243,10 +246,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if (firstBody?.categoryBitMask == haloCategory && secondBody?.categoryBitMask == lifeBarCategory) {
             //self.addExplosion(position: (firstBody?.node?.position)!, name : "HaloExplosion")
             self.addExplosion(position: (secondBody?.node?.position)!, name : "LifeBarExplosion")
+            self.run(SKAction.playSoundFileNamed("DeepExplosion.caf", waitForCompletion: false))
             
             //firstBody?.node?.removeFromParent()
             secondBody?.node?.removeFromParent()
             gameOver()
+        }
+        
+        if (firstBody?.categoryBitMask == ballCategory && secondBody?.categoryBitMask == edgeCategory) {
+            self.run(SKAction.playSoundFileNamed("Bounce.caf", waitForCompletion: false))
         }
     }
     
