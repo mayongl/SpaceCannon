@@ -227,6 +227,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 node.removeFromParent()
             }
         })
+ 
+        // Clean up halos
+        mainLayer?.enumerateChildNodes(withName: "halo", using: { (node, stop) in
+            if  !self.frame.contains(node.position) {
+                node.removeFromParent()
+            }
+        })
     }
     
     override func didApplyConstraints() {
@@ -253,6 +260,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.addExplosion(position: (firstBody?.node?.position)!, name : "HaloExplosion")
             self.run(SKAction.playSoundFileNamed("Explosion.caf", waitForCompletion: false))
             self.score += 1
+
+            //firstBody?.node?.isHidden = !(firstBody?.node?.isHidden)!
+            firstBody?.categoryBitMask = 0
             firstBody?.node?.removeFromParent()
             secondBody?.node?.removeFromParent()
         }
@@ -261,7 +271,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.addExplosion(position: (firstBody?.node?.position)!, name : "HaloExplosion")
             self.run(SKAction.playSoundFileNamed("Explosion.caf", waitForCompletion: false))
             
-            firstBody?.node?.removeFromParent()
+            firstBody?.node?.isHidden = true
+            firstBody?.categoryBitMask = 0
+            //firstBody?.node?.removeFromParent()
             secondBody?.node?.removeFromParent()
         }
         
