@@ -36,11 +36,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let shieldCategory : UInt32 = 0x1 << 3
     let lifeBarCategory : UInt32 = 0x1 << 4
     var ammo = 5
-
+    var score = 0
+    
     private var mainLayer : SKNode?
     private var menuLayer : SKNode?
     private var cannon : SKSpriteNode?
     private var ammoDisplay : SKSpriteNode?
+    private var scoreLabel : SKLabelNode?
     //private var explosion : SKEmitterNode?
     private var didShoot = false
     
@@ -53,6 +55,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         self.cannon = self.childNode(withName: "cannon") as? SKSpriteNode
         self.ammoDisplay = self.childNode(withName: "ammoDisplay") as? SKSpriteNode
+        self.scoreLabel = self.childNode(withName: "scoreLabel") as? SKLabelNode
         self.mainLayer = self.childNode(withName: "mainLayer")
         self.menuLayer = self.childNode(withName: "menuLayer")
         
@@ -93,6 +96,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         mainLayer?.removeAllChildren()
         
         ammo = 5
+        score = 0
         
         // Add shields
         for i in 0...6 {
@@ -149,6 +153,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             //self.ammo = ammo
             ammoDisplay?.texture = SKTexture(imageNamed: String.init(format: "Ammo%d", ammo))
         }
+        scoreLabel?.text = String.init(format: "Score: %d", score)
+        
     }
     
     func shoot() {
@@ -222,7 +228,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         if (firstBody?.categoryBitMask == haloCategory && secondBody?.categoryBitMask == ballCategory) {
             self.addExplosion(position: (firstBody?.node?.position)!, name : "HaloExplosion")
-
+            self.score += 1
             firstBody?.node?.removeFromParent()
             secondBody?.node?.removeFromParent()
         }
