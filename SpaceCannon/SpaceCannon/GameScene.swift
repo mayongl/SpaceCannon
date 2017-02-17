@@ -26,6 +26,7 @@ func randomInRange(low : CGFloat, high : CGFloat) -> CGFloat{
 }
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
+    
     let SHOOT_SPEED : CGFloat = 1000.0
     let HaloLowAngle : CGFloat = 200.0 * CGFloat.pi / 180.0
     let HaloHighAngle : CGFloat = 340.0 * CGFloat.pi / 180.0
@@ -35,9 +36,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let edgeCategory : UInt32 = 0x1 << 2
     let shieldCategory : UInt32 = 0x1 << 3
     let lifeBarCategory : UInt32 = 0x1 << 4
+    let keyTopScore = "TopScore"
+    
+    
     var ammo = 5
     var score = 0
+    var topScore = 0
     var gameOver = true
+    var appDefaults : UserDefaults?
     
     private var mainLayer : SKNode?
     private var menuLayer : SKNode?
@@ -47,6 +53,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     //private var explosion : SKEmitterNode?
     private var didShoot = false
     
+    /*override init() {
+        
+        appDefaults = UserDefaults.standard
+        super.init()
+        
+        topScore = (userDefaults?.integer(forKey: keyTopScore))!
+        
+
+    }*/
     
     override func didMove(to view: SKView) {
         self.physicsWorld.gravity = CGVector(dx: 0.0, dy: 0.0)
@@ -59,6 +74,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.scoreLabel = self.childNode(withName: "scoreLabel") as? SKLabelNode
         self.mainLayer = self.childNode(withName: "mainLayer")
         self.menuLayer = self.childNode(withName: "menuLayer")
+        
+        topScore = UserDefaults.standard.integer(forKey: keyTopScore)
+
         
         // Add edges
         let leftEdge = SKNode()
@@ -80,7 +98,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             ))
         }*/
         
-        //newGame()
+        showMenu()
         
         // Spawn halos
         self.run(SKAction.repeatForever(SKAction.sequence([SKAction.wait(forDuration: 2, withRange: 1),
@@ -275,11 +293,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             node.removeFromParent()
         })
         
-        gameOver = true
-        menuLayer?.isHidden = false
+        if (score > topScore) {
+            topScore = score
+            UserDefaults.standard.set(topScore, forKey: keyTopScore)
+        }
         
+        gameOver = true
+        
+        showMenu()
         //self.run(SKAction.sequence([SKAction.wait(forDuration: 1.5),
           //                                                 SKAction.perform(#selector(newGame), onTarget: self)]))
+    }
+    
+    func showMenu() {
+        let scoreNode = menuLayer?.childNode(withName: "score") as? SKLabelNode
+        scoreNode?.text = String.init(format : "%d", self.score)
+        let topScoreNode = menuLayer?.childNode(withName: "topScore") as? SKLabelNode
+        topScoreNode?.text = String.init(format : "%d", self.topScore)
+
+        menuLayer?.isHidden = false
     }
     
     func addExplosion(position : CGPoint, name : String) {
