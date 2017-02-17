@@ -37,6 +37,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let lifeBarCategory : UInt32 = 0x1 << 4
     var ammo = 5
     var score = 0
+    var gameOver = true
     
     private var mainLayer : SKNode?
     private var menuLayer : SKNode?
@@ -79,7 +80,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             ))
         }*/
         
-        newGame()
+        //newGame()
         
         // Spawn halos
         self.run(SKAction.repeatForever(SKAction.sequence([SKAction.wait(forDuration: 2, withRange: 1),
@@ -94,6 +95,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func newGame() {
         mainLayer?.removeAllChildren()
+        menuLayer?.isHidden = true
+        
+        gameOver = false
         
         ammo = 5
         score = 0
@@ -250,7 +254,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             //firstBody?.node?.removeFromParent()
             secondBody?.node?.removeFromParent()
-            gameOver()
+            endGame()
         }
         
         if (firstBody?.categoryBitMask == ballCategory && secondBody?.categoryBitMask == edgeCategory) {
@@ -258,7 +262,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    func gameOver() {
+    func endGame() {
+
         mainLayer?.enumerateChildNodes(withName: "halo", using: { (node, stop) in
                 self.addExplosion(position: node.position, name : "HaloExplosion")
                 node.removeFromParent()
@@ -270,8 +275,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             node.removeFromParent()
         })
         
-        self.run(SKAction.sequence([SKAction.wait(forDuration: 1.5),
-                                                           SKAction.perform(#selector(newGame), onTarget: self)]))
+        gameOver = true
+        menuLayer?.isHidden = false
+        
+        //self.run(SKAction.sequence([SKAction.wait(forDuration: 1.5),
+          //                                                 SKAction.perform(#selector(newGame), onTarget: self)]))
     }
     
     func addExplosion(position : CGPoint, name : String) {
@@ -315,7 +323,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //        if let label = self.label {
 //            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
 //        }
-        didShoot = true
+        if !gameOver {
+            didShoot = true
+        }
         //for t in touches { self.touchDown(atPoint: t.location(in: self)) }
     }
     
@@ -323,13 +333,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for t in touches { self.touchMoved(toPoint: t.location(in: self)) }
     }
     
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchUp(atPoint: t.location(in: self)) }
-    }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         for t in touches { self.touchUp(atPoint: t.location(in: self)) }
     }*/
     
-    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        //for t in touches { self.touchUp(atPoint: t.location(in: self)) }
+        for t in touches {
+            if gameOver {
+                let nodes = menuLayer?.nodes(at: t.location(in: self))
+                
+                if (nodes?.count)! > 0 && nodes?[0].name == "play" {
+                    self.newGame()
+                }
+            }
+        }
+    }
 }
