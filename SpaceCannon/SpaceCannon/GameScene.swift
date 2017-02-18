@@ -27,7 +27,7 @@ func randomInRange(low : CGFloat, high : CGFloat) -> CGFloat{
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
-    let SHOOT_SPEED : CGFloat = 1000.0
+    let SHOOT_SPEED : CGFloat = 2000.0
     let HaloLowAngle : CGFloat = 200.0 * CGFloat.pi / 180.0
     let HaloHighAngle : CGFloat = 340.0 * CGFloat.pi / 180.0
     let HaloSpeed : CGFloat = 200.0
@@ -113,7 +113,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func newGame() {
         mainLayer?.removeAllChildren()
-        menuLayer?.isHidden = true
+        menuLayer?.run(SKAction.scale(to: 0.0, duration: 0.5))
+        
+        //menuLayer?.isHidden = true
         
         gameOver = false
         
@@ -208,6 +210,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         trail?.yScale = 2.0
         ball.addChild(trail!)
         mainLayer?.addChild(ball)
+        self.run(SKAction.playSoundFileNamed("Laser.caf", waitForCompletion: false))
+
         
     }
     
@@ -221,7 +225,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     override func didSimulatePhysics() {
         if didShoot {
-            shoot()
+            for i in 0..<1 {
+                self.run(SKAction.sequence([SKAction.wait(forDuration: 0.1 * Double(i)),
+                                 SKAction.perform(#selector(shoot), onTarget: self)]))
+            }
             didShoot = false
 
         }
@@ -327,7 +334,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let topScoreNode = menuLayer?.childNode(withName: "topScore") as? SKLabelNode
         topScoreNode?.text = String.init(format : "%d", self.topScore)
 
-        menuLayer?.isHidden = false
+        //menuLayer?.isHidden = false
+        menuLayer?.run(SKAction.scale(to: 1.0, duration: 0.5))
     }
     
     func addExplosion(position : CGPoint, name : String) {
@@ -390,7 +398,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //for t in touches { self.touchUp(atPoint: t.location(in: self)) }
         for t in touches {
             if gameOver {
-                let nodes = menuLayer?.nodes(at: t.location(in: self))
+                let nodes = menuLayer?.nodes(at: t.location(in: self).applying(CGAffineTransform(translationX: -375.0, y: -1000.0)))
                 
                 if (nodes?.count)! > 0 && nodes?[0].name == "play" {
                     self.newGame()
