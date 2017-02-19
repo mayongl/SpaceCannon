@@ -398,7 +398,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //for t in touches { self.touchUp(atPoint: t.location(in: self)) }
         for t in touches {
             if gameOver {
-                let nodes = menuLayer?.nodes(at: t.location(in: self).applying(CGAffineTransform(translationX: -375.0, y: -1000.0)))
+                let nodes = menuLayer?.nodes(at: t.location(in: self).applying(CGAffineTransform(translationX: -((menuLayer?.position.x)!), y: -((menuLayer?.position.y)!))))
                 
                 if (nodes?.count)! > 0 && nodes?[0].name == "play" {
                     self.newGame()
