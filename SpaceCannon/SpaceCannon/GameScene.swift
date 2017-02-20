@@ -8,8 +8,7 @@
 
 import SpriteKit
 import GameplayKit
-
-
+import AVFoundation
 
 
 func radiansToVector(radians : CGFloat) -> CGVector {
@@ -379,10 +378,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //        if let label = self.label {
 //            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
 //        }
-        if !gameOver {
-            didShoot = true
+        if !gameOver && !(self.view?.isPaused)! {
+            for t in touches {
+                let nodes = self.nodes(at: t.location(in: self))
+            
+                if nodes.count == 0 || nodes[0].name != "pause" {
+                    didShoot = true
+                }
+            }
         }
-        //for t in touches { self.touchDown(atPoint: t.location(in: self)) }
     }
     
     /*override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -402,6 +406,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 if (nodes?.count)! > 0 && nodes?[0].name == "play" {
                     self.newGame()
+                }
+            } else {
+                let nodes = self.nodes(at: t.location(in: self))
+            
+                if nodes.count > 0 && nodes[0].name == "pause" {
+                    self.view?.isPaused = !(self.view?.isPaused)!
                 }
             }
         }
