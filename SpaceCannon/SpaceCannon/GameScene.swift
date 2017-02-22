@@ -38,8 +38,47 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let keyTopScore = "TopScore"
     
     
-    var ammo = 5
-    var score = 0
+    var ammo : Int = 5 {
+
+        
+       didSet {
+            if (ammo >= 0 && ammo <= 5) {
+
+                ammoDisplay?.texture = SKTexture(imageNamed: String.init(format: "Ammo%d", ammo))
+            } else {
+              // ammo = 5
+            }
+        }
+    }
+    
+    var score : Int = 0 {
+        didSet {
+            scoreLabel?.text = String.init(format: "Score: %d", score)
+        }
+    }
+    
+    var gamePaused : Bool = false {
+        willSet {
+            if !gameOver {  //It would be late if this is put into didSet
+                pauseButton?.isHidden = newValue
+                resumeButton?.isHidden = !newValue
+            }
+        }
+        didSet {
+            if !gameOver {
+                if gamePaused {
+//                    self.run(SKAction.sequence([//SKAction.wait(forDuration: 0.1),
+//                                                SKAction.run {self.view?.isPaused = true}
+//                        ]))
+                    self.run(SKAction.run {self.view?.isPaused = true}) //The s can't be called directly, otherwise there would be no time to show the resume button
+
+                } else {
+                    self.view?.isPaused = false
+                }
+            }
+        }
+    }
+    
     var topScore = 0
     var gameOver = true
     var appDefaults : UserDefaults?
@@ -49,6 +88,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private var cannon : SKSpriteNode?
     private var ammoDisplay : SKSpriteNode?
     private var scoreLabel : SKLabelNode?
+    private var pauseButton : SKSpriteNode?
+    private var resumeButton : SKSpriteNode?
     //private var explosion : SKEmitterNode?
     private var didShoot = false
     
@@ -73,7 +114,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.scoreLabel = self.childNode(withName: "scoreLabel") as? SKLabelNode
         self.mainLayer = self.childNode(withName: "mainLayer")
         self.menuLayer = self.childNode(withName: "menuLayer")
-        
+        self.pauseButton = self.childNode(withName: "pause") as? SKSpriteNode
+        self.pauseButton?.isHidden = true
+        self.resumeButton = self.childNode(withName: "resume") as? SKSpriteNode
+        self.resumeButton?.isHidden = true
         topScore = UserDefaults.standard.integer(forKey: keyTopScore)
 
         
@@ -105,8 +149,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         // Restore ammo
         self.run(SKAction.repeatForever(SKAction.sequence([SKAction.wait(forDuration: 1),
-                                                           SKAction.run {self.ammo += 1
-                                                            self.setAmmo(ammo: self.ammo)}
+                                                           SKAction.run {self.ammo += 1}
                                                             ])))
     }
     
@@ -120,6 +163,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         ammo = 5
         score = 0
+        pauseButton?.isHidden = false
         
         // Add shields
         for i in 0...6 {
@@ -171,20 +215,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
-    func setAmmo(ammo : Int) {
-        if (ammo >= 0 && ammo <= 5) {
-            //self.ammo = ammo
-            ammoDisplay?.texture = SKTexture(imageNamed: String.init(format: "Ammo%d", ammo))
-        }
-        scoreLabel?.text = String.init(format: "Score: %d", score)
-        
-    }
     
     func shoot() {
         guard self.ammo > 0 else {return}
         guard let cannon = self.cannon else { return }
         self.ammo -= 1
-        setAmmo(ammo: self.ammo)
+
         
         let ball = SKSpriteNode(imageNamed: "Ball")
         ball.name = "ball"
@@ -321,6 +357,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         gameOver = true
+        pauseButton?.isHidden = true
+        
         
         showMenu()
         //self.run(SKAction.sequence([SKAction.wait(forDuration: 1.5),
@@ -410,8 +448,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             } else {
                 let nodes = self.nodes(at: t.location(in: self))
             
-                if nodes.count > 0 && nodes[0].name == "pause" {
-                    self.view?.isPaused = !(self.view?.isPaused)!
+                if (nodes.count > 0){
+                    if nodes[0].name == "pause" {
+                        gamePaused = true
+                    } else if nodes[0].name == "resume" {
+                        gamePaused = false
+                        
+                    }
                 }
             }
         }

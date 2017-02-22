@@ -26,8 +26,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         if let view = self.window?.rootViewController?.view as! SKView? {
             // Load the SKScene from 'GameScene.sks'
-            //view.scene?.isPaused = true
-            view.isPaused = true
+            let gameScene = view.scene as! GameScene
+            //view.scene?.gamePaused = true
+            if !gameScene.gamePaused {
+                gameScene.gamePaused = true
+            }
         }
     }
 
