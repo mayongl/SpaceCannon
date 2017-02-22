@@ -46,7 +46,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
                 ammoDisplay?.texture = SKTexture(imageNamed: String.init(format: "Ammo%d", ammo))
             } else {
-              // ammo = 5
+                ammo = 5
             }
         }
     }
